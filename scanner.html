@@ -44,10 +44,11 @@
 </head>
 <body>
 <div id="container">
-  <video id="video" autoplay playsinline muted></video>
+  <video id="video" autoplay playsinline muted style="z-index:1;"></video>
   <canvas id="overlay"></canvas>
   <div id="status"></div>
-  <button id="start-btn" onclick="startApp()">[ TAP TO SCAN POSSIBLE NONCE ]</button>
+  <button id="start-btn" onclick="startCountdown()" style="z-index:2;">[ TAP TO SCAN POSSIBLE NONCE ]</button>
+  <div id="countdown" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#00ff00; font-size:4em; font-family:monospace; font-weight:bold; text-shadow:0 0 18px #00ff00; z-index:3;"></div>
 </div>
 
 <script>
@@ -58,6 +59,7 @@
 
   let audioCtx, phase = 'idle', scanY = 0, scanDir = 1, scanPassCount = 0;
   let animFrame, lastBeepTs = 0;
+  let countdownTimer = null;
 
   // ─── Audio helpers ────────────────────────────────────────────────────────
   function initAudio() {
@@ -109,6 +111,11 @@
     video.srcObject = stream;
     await video.play();
   }
+
+  // Start camera immediately on page load
+  window.addEventListener('DOMContentLoaded', () => {
+    startCamera('environment');
+  });
 
   // ─── Canvas sizing ────────────────────────────────────────────────────────
   function resizeCanvas() {
@@ -228,11 +235,30 @@
   }
 
   // ─── Phase transitions ────────────────────────────────────────────────────
-  async function startApp() {
-    document.getElementById('start-btn').style.display = 'none';
+
+  function startCountdown() {
+    const btn = document.getElementById('start-btn');
+    const countdownEl = document.getElementById('countdown');
+    btn.style.display = 'none';
+    countdownEl.style.display = 'block';
+    let count = 3;
+    countdownEl.textContent = count;
     initAudio();
     resizeCanvas();
-    await startCamera('environment');
+    // Camera already started on load
+    countdownTimer = setInterval(() => {
+      count--;
+      if (count > 0) {
+        countdownEl.textContent = count;
+      } else {
+        clearInterval(countdownTimer);
+        countdownEl.style.display = 'none';
+        startApp();
+      }
+    }, 1000);
+  }
+
+  async function startApp() {
     phase          = 'scanning';
     scanY          = 0;
     scanDir        = 1;
