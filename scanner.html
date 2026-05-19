@@ -47,7 +47,7 @@
   <video id="video" autoplay playsinline muted></video>
   <canvas id="overlay"></canvas>
   <div id="status"></div>
-  <button id="start-btn" onclick="startApp()">[ TAP TO SCAN ]</button>
+  <button id="start-btn" onclick="startApp()">[ TAP TO SCAN POSSIBLE NONCE ]</button>
 </div>
 
 <script>
@@ -178,7 +178,7 @@
     ctx.font       = 'bold 22px monospace';
     ctx.textAlign  = 'center';
     ctx.shadowBlur = 16;
-    ctx.fillText('▶  SUBJECT IDENTIFIED  ◀', canvas.width / 2, fy - 12);
+    ctx.fillText('▶  NONCE IDENTIFIED  ◀', canvas.width / 2, fy - 12);
     ctx.shadowBlur = 0;
   }
 
@@ -204,7 +204,7 @@
       // 3 full up-down passes = done
       if (scanPassCount >= 6) {
         phase = 'detected';
-        statusEl.textContent   = '⚠  DETECTED  ⚠';
+        statusEl.textContent   = '⚠  NONCE DETECTED  ⚠';
         statusEl.style.color      = '#ff3300';
         statusEl.style.textShadow = '0 0 16px #ff3300';
         playDetected();
@@ -250,7 +250,7 @@
     statusEl.textContent = '';
     await startCamera('user');
     phase = 'found';
-    statusEl.textContent   = '✓  FOUND  ✓';
+    statusEl.textContent   = '✓  NONCE FOUND  ✓';
     statusEl.style.color      = '#00ff00';
     statusEl.style.textShadow = '0 0 14px #00ff00';
     playDing();
